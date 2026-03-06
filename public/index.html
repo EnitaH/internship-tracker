@@ -7,61 +7,35 @@
 </head>
 
 <body>
+  <div class="container">
+    <div class="section">
+      <h1>Internship Tracker</h1>
+      <h2>Add New Application</h2>
 
-  <h1>Internship Tracker</h1>
+      <form id="internshipForm">
+        <input type="text" id="company" placeholder="Company Name" required>
+        <input type="text" id="role" placeholder="Role" required>
 
-  <h2>Add New Application</h2>
+        <select id="status">
+          <option value="Applied">Applied</option>
+          <option value="Interview">Interview</option>
+          <option value="Offer">Offer</option>
+          <option value="Rejected">Rejected</option>
+        </select>
 
-  <form id="internshipForm">
+        <input type="text" id="location" placeholder="Location">
+        <input type="date" id="date_applied">
+        <textarea id="notes" placeholder="Notes"></textarea>
 
-    <input
-      type="text"
-      id="company"
-      placeholder="Company Name"
-      required
-    >
+        <button type="submit">Add Internship</button>
+      </form>
+    </div>
 
-    <input
-      type="text"
-      id="role"
-      placeholder="Role"
-      required
-    >
-
-    <select id="status">
-      <option value="Applied">Applied</option>
-      <option value="Interview">Interview</option>
-      <option value="Offer">Offer</option>
-      <option value="Rejected">Rejected</option>
-    </select>
-
-    <input
-      type="text"
-      id="location"
-      placeholder="Location"
-    >
-
-    <input
-      type="date"
-      id="date_applied"
-    >
-
-    <textarea
-      id="notes"
-      placeholder="Notes"
-    ></textarea>
-
-    <button type="submit">
-      Add Internship
-    </button>
-
-  </form>
-
-  <hr>
-
-  <h2>Your Applications</h2>
-
-  <div id="internshipList"></div>
+    <div class="section">
+      <h2>Your Applications</h2>
+      <div id="internshipList"></div>
+    </div>
+  </div>
 
   <script src="app.js"></script>
 

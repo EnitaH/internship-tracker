@@ -11,15 +11,18 @@ async function fetchInternships() {
     const div = document.createElement("div");
     div.classList.add("card");
 
+    const statusClass = `status-${internship.status.toLowerCase()}`;
     div.innerHTML = `
-      <h3>${internship.company}</h3>
-      <p><strong>Role:</strong> ${internship.role}</p>
-      <p><strong>Status:</strong> ${internship.status}</p>
-      <p><strong>Location:</strong> ${internship.location || "N/A"}</p>
-      <p><strong>Date:</strong> ${internship.date_applied || "N/A"}</p>
-      <p>${internship.notes || ""}</p>
+        <h3>${internship.company}</h3>
+        <p><strong>Role:</strong> ${internship.role}</p>
+        <p><strong>Location:</strong> ${internship.location || "N/A"}</p>
+        <p><strong>Date:</strong> ${internship.date_applied || "N/A"}</p>
+        <p>${internship.notes || ""}</p>
+        <span class="status-badge ${statusClass}">
+         ${internship.status}
+    </span>
     `;
-
+    
     internshipList.appendChild(div);
   });
 }
