@@ -330,3 +330,14 @@ hr {
   border: 1px solid #fca5a5;
   box-shadow: 0 6px 18px rgba(185, 28, 28, 0.08);
 }
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.input-group label {
+  font-size: 0.85rem;
+  color: #6b7280;
+  font-weight: 600;
+}
