@@ -56,16 +56,24 @@ async function fetchInternships() {
     `/api/internships?status=${encodeURIComponent(status)}&search=${encodeURIComponent(search)}`
   );
   const data = await res.json();
+  
+const sortValue = sortFilter ? sortFilter.value : "newest";
 
-  const sortValue = sortFilter ? sortFilter.value : "newest";
-
-  if (sortValue === "oldest") {
-    data.sort((a, b) => a.id - b.id);
-  } else if (sortValue === "az") {
-    data.sort((a, b) => a.company.localeCompare(b.company));
-  } else {
-    data.sort((a, b) => b.id - a.id);
-  }
+if (sortValue === "oldest") {
+  data.sort((a, b) => {
+    const dateA = a.date_applied ? new Date(a.date_applied) : new Date(0);
+    const dateB = b.date_applied ? new Date(b.date_applied) : new Date(0);
+    return dateA - dateB;
+  });
+} else if (sortValue === "az") {
+  data.sort((a, b) => a.company.localeCompare(b.company));
+} else {
+  data.sort((a, b) => {
+    const dateA = a.date_applied ? new Date(a.date_applied) : new Date(0);
+    const dateB = b.date_applied ? new Date(b.date_applied) : new Date(0);
+    return dateB - dateA;
+  });
+}
 
   internshipList.innerHTML = "";
 
@@ -143,7 +151,7 @@ async function deleteInternship(id) {
     resetForm();
   }
 
-  
+
   showToast("Internship deleted", "delete");
   fetchInternships();
 }
