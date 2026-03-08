@@ -2,6 +2,7 @@ const statusFilter = document.getElementById("statusFilter");
 const form = document.getElementById("internshipForm");
 const internshipList = document.getElementById("internshipList");
 const searchInput = document.getElementById("searchInput");
+const sortFilter = document.getElementById("sortFilter");
 
 const totalCount = document.getElementById("totalCount");
 const appliedCount = document.getElementById("appliedCount");
@@ -29,15 +30,25 @@ async function updateStats() {
 }
 
 async function fetchInternships() {
-    await updateStats();
-    
-const status = statusFilter ? statusFilter.value : "All";
-const search = searchInput ? searchInput.value.trim() : "";
+  await updateStats();
 
-const res = await fetch(
-  `/api/internships?status=${encodeURIComponent(status)}&search=${encodeURIComponent(search)}`
-);
+  const status = statusFilter ? statusFilter.value : "All";
+  const search = searchInput ? searchInput.value.trim() : "";
+
+  const res = await fetch(
+    `/api/internships?status=${encodeURIComponent(status)}&search=${encodeURIComponent(search)}`
+  );
   const data = await res.json();
+
+  const sortValue = sortFilter ? sortFilter.value : "newest";
+
+  if (sortValue === "oldest") {
+    data.sort((a, b) => a.id - b.id);
+  } else if (sortValue === "az") {
+    data.sort((a, b) => a.company.localeCompare(b.company));
+  } else {
+    data.sort((a, b) => b.id - a.id);
+  }
 
   internshipList.innerHTML = "";
 
@@ -157,10 +168,15 @@ form.addEventListener("submit", async (e) => {
 });
 
 fetchInternships();
+
 if (statusFilter) {
   statusFilter.addEventListener("change", fetchInternships);
 }
 
 if (searchInput) {
   searchInput.addEventListener("input", fetchInternships);
+}
+
+if (sortFilter) {
+  sortFilter.addEventListener("change", fetchInternships);
 }
