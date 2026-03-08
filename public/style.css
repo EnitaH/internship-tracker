@@ -210,3 +210,15 @@ hr {
   border-radius: 8px;
   border: 1px solid #d1d5db;
 }
+.filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.filters input,
+.filters select {
+  flex: 1;
+  min-width: 220px;
+}
