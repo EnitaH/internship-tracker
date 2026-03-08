@@ -204,3 +204,9 @@ hr {
 .delete-btn:hover {
   background: #dc2626;
 }
+#statusFilter {
+  margin-bottom: 16px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+}

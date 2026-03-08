@@ -1,10 +1,13 @@
+const statusFilter = document.getElementById("statusFilter");
 const form = document.getElementById("internshipForm");
 const internshipList = document.getElementById("internshipList");
 
 let editingId = null;
 
 async function fetchInternships() {
-  const res = await fetch("/api/internships");
+const status = statusFilter ? statusFilter.value : "All";
+const res = await fetch(`/api/internships?status=${status}`);
+  
   const data = await res.json();
 
   internshipList.innerHTML = "";
@@ -125,3 +128,6 @@ form.addEventListener("submit", async (e) => {
 });
 
 fetchInternships();
+if (statusFilter) {
+  statusFilter.addEventListener("change", fetchInternships);
+}
