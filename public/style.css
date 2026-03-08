@@ -369,3 +369,17 @@ hr {
   border: 1px solid #ef4444 !important;
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
 }
+
+.top-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.export-btn {
+  background: #0f766e;
+}
+
+.export-btn:hover {
+  background: #0d5f59;
+}
