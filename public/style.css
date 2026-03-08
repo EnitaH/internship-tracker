@@ -255,3 +255,20 @@ hr {
   font-size: 1.8rem;
   color: #111827;
 }
+.form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 10px;
+}
+
+.cancel-btn {
+  background: #9ca3af;
+}
+
+.cancel-btn:hover {
+  background: #6b7280;
+}
+
+.cancel-btn.hidden {
+  display: none;
+}

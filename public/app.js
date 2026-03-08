@@ -3,6 +3,7 @@ const form = document.getElementById("internshipForm");
 const internshipList = document.getElementById("internshipList");
 const searchInput = document.getElementById("searchInput");
 const sortFilter = document.getElementById("sortFilter");
+const cancelEditBtn = document.getElementById("cancelEditBtn");
 
 const totalCount = document.getElementById("totalCount");
 const appliedCount = document.getElementById("appliedCount");
@@ -112,6 +113,8 @@ function editInternship(id, company, role, status, location, notes, date_applied
   document.getElementById("date_applied").value = date_applied;
 
   form.querySelector("button[type='submit']").textContent = "Update Internship";
+  cancelEditBtn.classList.remove("hidden");
+  
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -131,6 +134,7 @@ function resetForm() {
   editingId = null;
   form.reset();
   form.querySelector("button[type='submit']").textContent = "Add Internship";
+  cancelEditBtn.classList.add("hidden");
 }
 
 form.addEventListener("submit", async (e) => {
@@ -162,8 +166,10 @@ form.addEventListener("submit", async (e) => {
       body: JSON.stringify(internship)
     });
   }
-
+cancelEditBtn.addEventListener("click", () => {
   resetForm();
+});
+
   fetchInternships();
 });
 
