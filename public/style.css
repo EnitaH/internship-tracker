@@ -272,3 +272,38 @@ hr {
 .cancel-btn.hidden {
   display: none;
 }
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #111827;
+  color: white;
+  padding: 14px 18px;
+  border-radius: 10px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15);
+  font-weight: 600;
+  z-index: 1000;
+  opacity: 1;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.toast.hidden {
+  display: none;
+}
+
+.toast.show {
+  display: block;
+  transform: translateY(0);
+}
+
+.toast.success {
+  background: #15803d;
+}
+
+.toast.info {
+  background: #1d4ed8;
+}
+
+.toast.delete {
+  background: #b91c1c;
+}

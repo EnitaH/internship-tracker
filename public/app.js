@@ -4,6 +4,7 @@ const internshipList = document.getElementById("internshipList");
 const searchInput = document.getElementById("searchInput");
 const sortFilter = document.getElementById("sortFilter");
 const cancelEditBtn = document.getElementById("cancelEditBtn");
+const toast = document.getElementById("toast");
 
 const totalCount = document.getElementById("totalCount");
 const appliedCount = document.getElementById("appliedCount");
@@ -30,6 +31,19 @@ async function updateStats() {
   interviewCount.textContent = interview;
   offerCount.textContent = offer;
   rejectedCount.textContent = rejected;
+}
+
+let toastTimeout;
+
+function showToast(message, type = "success") {
+  clearTimeout(toastTimeout);
+
+  toast.textContent = message;
+  toast.className = `toast show ${type}`;
+
+  toastTimeout = setTimeout(() => {
+    toast.className = "toast hidden";
+  }, 2500);
 }
 
 async function fetchInternships() {
@@ -129,6 +143,8 @@ async function deleteInternship(id) {
     resetForm();
   }
 
+  
+  showToast("Internship deleted", "delete");
   fetchInternships();
 }
 
@@ -151,24 +167,27 @@ form.addEventListener("submit", async (e) => {
     date_applied: document.getElementById("date_applied").value
   };
 
-  if (editingId) {
-    await fetch(`/api/internships/${editingId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(internship)
-    });
-  } else {
-    await fetch("/api/internships", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(internship)
-    });
-  }
+if (editingId) {
+  await fetch(`/api/internships/${editingId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(internship)
+  });
 
+  showToast("Internship updated", "info");
+} else {
+  await fetch("/api/internships", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(internship)
+  });
+
+  showToast("Internship added", "success");
+}
   resetForm();
   fetchInternships();
 });
