@@ -1,7 +1,7 @@
 {
   "name": "internship-tracker",
   "version": "1.0.0",
-  "description": "",
+  "description": "A **full-stack web application** for managing and tracking internship and placement applications.\r The application allows users to add, view, and organise internship applications with details such as company, role, status, location, and notes.",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

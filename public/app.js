@@ -13,16 +13,21 @@ async function fetchInternships() {
 
     const statusClass = `status-${internship.status.toLowerCase()}`;
     div.innerHTML = `
-        <h3>${internship.company}</h3>
-        <p><strong>Role:</strong> ${internship.role}</p>
-        <p><strong>Location:</strong> ${internship.location || "N/A"}</p>
-        <p><strong>Date:</strong> ${internship.date_applied || "N/A"}</p>
-        <p>${internship.notes || ""}</p>
-        <span class="status-badge ${statusClass}">
-         ${internship.status}
-    </span>
-    `;
-    
+  <h3>${internship.company}</h3>
+  <p><strong>Role:</strong> ${internship.role}</p>
+  <p><strong>Location:</strong> ${internship.location || "N/A"}</p>
+  <p><strong>Date:</strong> ${internship.date_applied || "N/A"}</p>
+  <p>${internship.notes || ""}</p>
+
+  <span class="status-badge ${statusClass}">
+    ${internship.status}
+  </span>
+
+  <button onclick="deleteInternship(${internship.id})">
+    Delete
+  </button>
+`;
+
     internshipList.appendChild(div);
   });
 }
@@ -51,4 +56,10 @@ form.addEventListener("submit", async (e) => {
   fetchInternships();
 });
 
-fetchInternships();
+async function deleteInternship(id) {
+  await fetch(`/api/internships/${id}`, {
+    method: "DELETE"
+  });
+
+  fetchInternships();
+}
