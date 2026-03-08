@@ -13,6 +13,8 @@ const rejectedCount = document.getElementById("rejectedCount");
 
 let editingId = null;
 
+cancelEditBtn.classList.add("hidden");
+
 async function updateStats() {
   const res = await fetch("/api/internships");
   const data = await res.json();
@@ -114,7 +116,7 @@ function editInternship(id, company, role, status, location, notes, date_applied
 
   form.querySelector("button[type='submit']").textContent = "Update Internship";
   cancelEditBtn.classList.remove("hidden");
-  
+
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -166,12 +168,16 @@ form.addEventListener("submit", async (e) => {
       body: JSON.stringify(internship)
     });
   }
+
+  resetForm();
+  fetchInternships();
+});
+
 cancelEditBtn.addEventListener("click", () => {
   resetForm();
 });
 
-  fetchInternships();
-});
+
 
 fetchInternships();
 
