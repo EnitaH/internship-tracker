@@ -45,6 +45,42 @@ function showToast(message, type = "success") {
     toast.className = "toast hidden";
   }, 2500);
 }
+function getDeadlineStatus(deadline) {
+  if (!deadline) return "";
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const deadlineDate = new Date(deadline);
+  deadlineDate.setHours(0, 0, 0, 0);
+
+  const diffTime = deadlineDate - today;
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays < 0) {
+    return "overdue";
+  }
+
+  if (diffDays <= 7) {
+    return "due-soon";
+  }
+
+  return "normal";
+}
+
+function getDeadlineBadge(deadline) {
+  const status = getDeadlineStatus(deadline);
+
+  if (status === "overdue") {
+    return `<span class="deadline-badge overdue">Overdue</span>`;
+  }
+
+  if (status === "due-soon") {
+    return `<span class="deadline-badge due-soon">Due Soon</span>`;
+  }
+
+  return "";
+}
 
 async function fetchInternships() {
   await updateStats();
@@ -56,7 +92,7 @@ async function fetchInternships() {
     `/api/internships?status=${encodeURIComponent(status)}&search=${encodeURIComponent(search)}`
   );
   const data = await res.json();
-  
+
 const sortValue = sortFilter ? sortFilter.value : "newest";
 
 if (sortValue === "oldest") {
@@ -83,40 +119,49 @@ if (sortValue === "oldest") {
   }
 
   data.forEach(internship => {
+    const deadlineStatus = getDeadlineStatus(internship.deadline);
+    const deadlineBadge = getDeadlineBadge(internship.deadline);
+
     const div = document.createElement("div");
+
     div.classList.add("card");
+    if (deadlineStatus === "overdue") {
+        div.classList.add("card-overdue");
+    }
 
     const statusClass = `status-${internship.status.toLowerCase()}`;
 
-    div.innerHTML = `
-      <h3>${internship.company}</h3>
-      <p><strong>Role:</strong> ${internship.role}</p>
-      <p><strong>Location:</strong> ${internship.location || "N/A"}</p>
-      <p><strong>Date:</strong> ${internship.date_applied || "N/A"}</p>
-      <p>${internship.notes || ""}</p>
+div.innerHTML = `
+  <h3>${internship.company}</h3>
+  <p><strong>Role:</strong> ${internship.role}</p>
+  <p><strong>Location:</strong> ${internship.location || "N/A"}</p>
+  <p><strong>Date Applied:</strong> ${internship.date_applied || "N/A"}</p>
+  <p><strong>Deadline:</strong> ${internship.deadline || "N/A"} ${deadlineBadge}</p>
+  <p>${internship.notes || ""}</p>
 
-      <span class="status-badge ${statusClass}">
-        ${internship.status}
-      </span>
+  <span class="status-badge ${statusClass}">
+    ${internship.status}
+  </span>
 
-      <div class="card-actions">
-        <button class="edit-btn" onclick="editInternship(
-          ${internship.id},
-          '${escapeSingleQuotes(internship.company)}',
-          '${escapeSingleQuotes(internship.role)}',
-          '${escapeSingleQuotes(internship.status)}',
-          '${escapeSingleQuotes(internship.location || "")}',
-          '${escapeSingleQuotes(internship.notes || "")}',
-          '${escapeSingleQuotes(internship.date_applied || "")}'
-        )">
-          Edit
-        </button>
+  <div class="card-actions">
+    <button class="edit-btn" onclick="editInternship(
+      ${internship.id},
+      '${escapeSingleQuotes(internship.company)}',
+      '${escapeSingleQuotes(internship.role)}',
+      '${escapeSingleQuotes(internship.status)}',
+      '${escapeSingleQuotes(internship.location || "")}',
+      '${escapeSingleQuotes(internship.notes || "")}',
+      '${escapeSingleQuotes(internship.date_applied || "")}',
+      '${escapeSingleQuotes(internship.deadline || "")}'
+    )">
+      Edit
+    </button>
 
-        <button class="delete-btn" onclick="deleteInternship(${internship.id})">
-          Delete
-        </button>
-      </div>
-    `;
+    <button class="delete-btn" onclick="deleteInternship(${internship.id})">
+      Delete
+    </button>
+  </div>
+`;
 
     internshipList.appendChild(div);
   });
@@ -126,7 +171,7 @@ function escapeSingleQuotes(text) {
   return String(text).replace(/'/g, "\\'");
 }
 
-function editInternship(id, company, role, status, location, notes, date_applied) {
+function editInternship(id, company, role, status, location, notes, date_applied, deadline) {
   editingId = id;
 
   document.getElementById("company").value = company;
@@ -135,6 +180,7 @@ function editInternship(id, company, role, status, location, notes, date_applied
   document.getElementById("location").value = location;
   document.getElementById("notes").value = notes;
   document.getElementById("date_applied").value = date_applied;
+  document.getElementById("deadline").value = deadline;
 
   form.querySelector("button[type='submit']").textContent = "Update Internship";
   cancelEditBtn.classList.remove("hidden");
@@ -160,7 +206,9 @@ function resetForm() {
   editingId = null;
   form.reset();
   form.querySelector("button[type='submit']").textContent = "Add Internship";
+  if (cancelEditBtn) {
   cancelEditBtn.classList.add("hidden");
+    }
 }
 
 form.addEventListener("submit", async (e) => {
@@ -172,7 +220,8 @@ form.addEventListener("submit", async (e) => {
     status: document.getElementById("status").value,
     location: document.getElementById("location").value,
     notes: document.getElementById("notes").value,
-    date_applied: document.getElementById("date_applied").value
+    date_applied: document.getElementById("date_applied").value,
+    deadline: document.getElementById("deadline").value
   };
 
 if (editingId) {
@@ -200,10 +249,11 @@ if (editingId) {
   fetchInternships();
 });
 
+if (cancelEditBtn) {
 cancelEditBtn.addEventListener("click", () => {
   resetForm();
-});
-
+    });
+}
 
 
 fetchInternships();

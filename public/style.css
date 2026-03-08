@@ -307,3 +307,26 @@ hr {
 .toast.delete {
   background: #b91c1c;
 }
+.deadline-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.deadline-badge.overdue {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.deadline-badge.due-soon {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.card-overdue {
+  border: 1px solid #fca5a5;
+  box-shadow: 0 6px 18px rgba(185, 28, 28, 0.08);
+}

@@ -19,18 +19,20 @@ const db = new sqlite3.Database("./database.db", (err) => {
 });
 
 db.run(`
-CREATE TABLE IF NOT EXISTS internships (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  company TEXT NOT NULL,
-  role TEXT NOT NULL,
-  status TEXT NOT NULL CHECK (
-    status IN ('Applied', 'Interview', 'Offer', 'Rejected')
-  ),
-  location TEXT,
-  notes TEXT,
-  date_applied TEXT
-)
+  CREATE TABLE IF NOT EXISTS internships (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    company TEXT NOT NULL,
+    role TEXT NOT NULL,
+    status TEXT NOT NULL CHECK (
+      status IN ('Applied', 'Interview', 'Offer', 'Rejected')
+    ),
+    location TEXT,
+    notes TEXT,
+    date_applied TEXT,
+    deadline TEXT
+  )
 `);
+
 // GET all internships with optional filter/search
 app.get("/api/internships", (req, res) => {
   const { status, search } = req.query;
@@ -60,7 +62,7 @@ app.get("/api/internships", (req, res) => {
 });
 // POST a new internship
 app.post("/api/internships", (req, res) => {
-  const { company, role, status, location, notes, date_applied } = req.body;
+  const { company, role, status, location, notes, date_applied, deadline} = req.body;
 
   if (!company || !role || !status) {
     return res.status(400).json({
@@ -69,13 +71,13 @@ app.post("/api/internships", (req, res) => {
   }
 
   const sql = `
-  INSERT INTO internships (company, role, status, location, notes, date_applied)
-  VALUES (?, ?, ?, ?, ?, ?)
+  INSERT INTO internships (company, role, status, location, notes, date_applied, deadline)
+  VALUES (?, ?, ?, ?, ?, ?, ?)
   `;
 
   db.run(
     sql,
-    [company, role, status, location, notes, date_applied],
+    [company, role, status, location, notes, date_applied, deadline],
     function (err) {
       if (err) {
         return res.status(500).json({ error: err.message });
@@ -88,7 +90,8 @@ app.post("/api/internships", (req, res) => {
         status,
         location,
         notes,
-        date_applied
+        date_applied,
+        deadline
       });
     }
   );
@@ -97,7 +100,7 @@ app.post("/api/internships", (req, res) => {
 // PUT update an internship
 app.put("/api/internships/:id", (req, res) => {
   const { id } = req.params;
-  const { company, role, status, location, notes, date_applied } = req.body;
+  const { company, role, status, location, notes, date_applied, deadline } = req.body;
 
   if (!company || !role || !status) {
     return res.status(400).json({
@@ -107,13 +110,13 @@ app.put("/api/internships/:id", (req, res) => {
 
   const sql = `
     UPDATE internships
-    SET company = ?, role = ?, status = ?, location = ?, notes = ?, date_applied = ?
+    SET company = ?, role = ?, status = ?, location = ?, notes = ?, date_applied = ?, deadline = ?
     WHERE id = ?
   `;
 
  db.run(
     sql,
-    [company, role, status, location, notes, date_applied, id],
+    [company, role, status, location, notes, date_applied, deadline, id],
     function (err) {
       if (err) {
         return res.status(500).json({ error: err.message });
