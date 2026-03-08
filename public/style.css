@@ -209,11 +209,10 @@ hr {
   padding: 10px;
   border-radius: 8px;
   border: 1px solid #d1d5db;
-}
-.filters {
+}.filters {
   display: flex;
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   flex-wrap: wrap;
 }
 
@@ -221,4 +220,13 @@ hr {
 .filters select {
   flex: 1;
   min-width: 220px;
+  margin: 0;
+}
+
+.filters input {
+  height: 48px;
+}
+
+.filters select {
+  height: 48px;
 }
