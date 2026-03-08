@@ -5,6 +5,7 @@ const searchInput = document.getElementById("searchInput");
 const sortFilter = document.getElementById("sortFilter");
 const cancelEditBtn = document.getElementById("cancelEditBtn");
 const toast = document.getElementById("toast");
+const formMessage = document.getElementById("formMessage");
 
 const totalCount = document.getElementById("totalCount");
 const appliedCount = document.getElementById("appliedCount");
@@ -15,6 +16,24 @@ const rejectedCount = document.getElementById("rejectedCount");
 let editingId = null;
 
 cancelEditBtn.classList.add("hidden");
+
+function clearFormMessage() {
+  formMessage.textContent = "";
+  formMessage.className = "form-message hidden";
+}
+
+function showFormError(message) {
+  formMessage.textContent = message;
+  formMessage.className = "form-message error";
+}
+
+function clearInputErrors() {
+  document.getElementById("company").classList.remove("input-error");
+  document.getElementById("role").classList.remove("input-error");
+  document.getElementById("notes").classList.remove("input-error");
+  document.getElementById("date_applied").classList.remove("input-error");
+  document.getElementById("deadline").classList.remove("input-error");
+}
 
 async function updateStats() {
   const res = await fetch("/api/internships");
@@ -80,6 +99,49 @@ function getDeadlineBadge(deadline) {
   }
 
   return "";
+}
+
+function validateForm(internship) {
+  clearFormMessage();
+  clearInputErrors();
+
+  const companyInput = document.getElementById("company");
+  const roleInput = document.getElementById("role");
+  const notesInput = document.getElementById("notes");
+  const dateAppliedInput = document.getElementById("date_applied");
+  const deadlineInput = document.getElementById("deadline");
+
+  if (!internship.company.trim()) {
+    companyInput.classList.add("input-error");
+    showFormError("Company name is required.");
+    return false;
+  }
+
+  if (internship.role.trim().length < 2) {
+    roleInput.classList.add("input-error");
+    showFormError("Role must be at least 2 characters long.");
+    return false;
+  }
+
+  if (internship.notes.length > 300) {
+    notesInput.classList.add("input-error");
+    showFormError("Notes must be 300 characters or less.");
+    return false;
+  }
+
+  if (internship.date_applied && internship.deadline) {
+    const appliedDate = new Date(internship.date_applied);
+    const deadlineDate = new Date(internship.deadline);
+
+    if (deadlineDate < appliedDate) {
+      dateAppliedInput.classList.add("input-error");
+      deadlineInput.classList.add("input-error");
+      showFormError("Application deadline cannot be earlier than the date applied.");
+      return false;
+    }
+  }
+
+  return true;
 }
 
 async function fetchInternships() {
@@ -206,10 +268,11 @@ function resetForm() {
   editingId = null;
   form.reset();
   form.querySelector("button[type='submit']").textContent = "Add Internship";
-  if (cancelEditBtn) {
+
   cancelEditBtn.classList.add("hidden");
-    }
-}
+  clearFormMessage();
+  clearInputErrors();
+ }
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -223,6 +286,10 @@ form.addEventListener("submit", async (e) => {
     date_applied: document.getElementById("date_applied").value,
     deadline: document.getElementById("deadline").value
   };
+
+  if (!validateForm(internship)) {
+  return;
+    }
 
 if (editingId) {
   await fetch(`/api/internships/${editingId}`, {
