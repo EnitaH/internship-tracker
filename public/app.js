@@ -3,9 +3,34 @@ const form = document.getElementById("internshipForm");
 const internshipList = document.getElementById("internshipList");
 const searchInput = document.getElementById("searchInput");
 
+const totalCount = document.getElementById("totalCount");
+const appliedCount = document.getElementById("appliedCount");
+const interviewCount = document.getElementById("interviewCount");
+const offerCount = document.getElementById("offerCount");
+const rejectedCount = document.getElementById("rejectedCount");
+
 let editingId = null;
 
+async function updateStats() {
+  const res = await fetch("/api/internships");
+  const data = await res.json();
+
+  const total = data.length;
+  const applied = data.filter(item => item.status === "Applied").length;
+  const interview = data.filter(item => item.status === "Interview").length;
+  const offer = data.filter(item => item.status === "Offer").length;
+  const rejected = data.filter(item => item.status === "Rejected").length;
+
+  totalCount.textContent = total;
+  appliedCount.textContent = applied;
+  interviewCount.textContent = interview;
+  offerCount.textContent = offer;
+  rejectedCount.textContent = rejected;
+}
+
 async function fetchInternships() {
+    await updateStats();
+    
 const status = statusFilter ? statusFilter.value : "All";
 const search = searchInput ? searchInput.value.trim() : "";
 
