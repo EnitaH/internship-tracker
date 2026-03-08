@@ -111,7 +111,7 @@ function validateForm(internship) {
   const dateAppliedInput = document.getElementById("date_applied");
   const deadlineInput = document.getElementById("deadline");
 
-  if (!internship.company.trim()) {
+  if (!internship.company || !internship.company.trim()) {
     companyInput.classList.add("input-error");
     showFormError("Company name is required.");
     return false;
@@ -278,14 +278,14 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const internship = {
-    company: document.getElementById("company").value,
-    role: document.getElementById("role").value,
-    status: document.getElementById("status").value,
-    location: document.getElementById("location").value,
-    notes: document.getElementById("notes").value,
-    date_applied: document.getElementById("date_applied").value,
-    deadline: document.getElementById("deadline").value
-  };
+  company: document.getElementById("company").value.trim(),
+  role: document.getElementById("role").value.trim(),
+  status: document.getElementById("status").value,
+  location: document.getElementById("location").value.trim(),
+  notes: document.getElementById("notes").value.trim(),
+  date_applied: document.getElementById("date_applied").value,
+  deadline: document.getElementById("deadline").value
+};
 
   if (!validateForm(internship)) {
   return;
