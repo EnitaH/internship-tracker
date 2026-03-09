@@ -383,3 +383,8 @@ hr {
 .export-btn:hover {
   background: #0d5f59;
 }
+.bottom-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
