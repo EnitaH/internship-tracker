@@ -388,3 +388,8 @@ hr {
   justify-content: flex-end;
   margin-top: 20px;
 }
+.export-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.6;
+}

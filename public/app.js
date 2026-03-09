@@ -179,6 +179,13 @@ async function fetchInternships() {
 
   internshipList.innerHTML = "";
 
+  if (exportCsvBtn) {
+    exportCsvBtn.disabled = data.length === 0;
+    exportCsvBtn.title = data.length === 0
+    ? "No internships to export"
+    : "Export internships to CSV";
+    }
+
   if (data.length === 0) {
     internshipList.innerHTML = `<div class="empty-state">No applications yet.</div>`;
     return;
