@@ -15,6 +15,7 @@ const offerCount = document.getElementById("offerCount");
 const rejectedCount = document.getElementById("rejectedCount");
 
 let editingId = null;
+let toastTimeout;
 
 cancelEditBtn.classList.add("hidden");
 
@@ -36,24 +37,7 @@ function clearInputErrors() {
   document.getElementById("deadline").classList.remove("input-error");
 }
 
-async function updateStats() {
-  const res = await fetch("/api/internships");
-  const data = await res.json();
 
-  const total = data.length;
-  const applied = data.filter(item => item.status === "Applied").length;
-  const interview = data.filter(item => item.status === "Interview").length;
-  const offer = data.filter(item => item.status === "Offer").length;
-  const rejected = data.filter(item => item.status === "Rejected").length;
-
-  totalCount.textContent = total;
-  appliedCount.textContent = applied;
-  interviewCount.textContent = interview;
-  offerCount.textContent = offer;
-  rejectedCount.textContent = rejected;
-}
-
-let toastTimeout;
 
 function showToast(message, type = "success") {
   clearTimeout(toastTimeout);
@@ -120,7 +104,7 @@ function validateForm(internship) {
     return false;
   }
 
-  if (internship.role.trim().length < 2) {
+  if (!internship.role || internship.role.trim().length < 2) {
     roleInput.classList.add("input-error");
     showFormError("Role must be at least 2 characters long.");
     return false;
@@ -146,6 +130,18 @@ function validateForm(internship) {
 
   return true;
 }
+
+async function updateStats() {
+  const res = await fetch("/api/internships");
+  const data = await res.json();
+
+  totalCount.textContent = data.length;
+  appliedCount.textContent = data.filter(item => item.status === "Applied").length;
+  interviewCount.textContent = data.filter(item => item.status === "Interview").length;
+  offerCount.textContent = data.filter(item => item.status === "Offer").length;
+  rejectedCount.textContent = data.filter(item => item.status === "Rejected").length;
+}
+
 async function getFilteredAndSortedInternships() {
   const status = statusFilter ? statusFilter.value : "All";
   const search = searchInput ? searchInput.value.trim() : "";
@@ -175,7 +171,8 @@ async function getFilteredAndSortedInternships() {
 
   return data;
 }
-    async function fetchInternships() {
+
+async function fetchInternships() {
   await updateStats();
 
   const data = await getFilteredAndSortedInternships();
@@ -222,9 +219,7 @@ async function getFilteredAndSortedInternships() {
           '${escapeSingleQuotes(internship.notes || "")}',
           '${escapeSingleQuotes(internship.date_applied || "")}',
           '${escapeSingleQuotes(internship.deadline || "")}'
-        )">
-          Edit
-        </button>
+        )">Edit</button>
 
         <button class="delete-btn" onclick="deleteInternship(${internship.id})">
           Delete
@@ -236,60 +231,7 @@ async function getFilteredAndSortedInternships() {
   });
 }
 
-  internshipList.innerHTML = "";
 
-  if (data.length === 0) {
-    internshipList.innerHTML = `<div class="empty-state">No applications yet.</div>`;
-    return;
-  }
-
-  data.forEach(internship => {
-    const deadlineStatus = getDeadlineStatus(internship.deadline);
-    const deadlineBadge = getDeadlineBadge(internship.deadline);
-
-    const div = document.createElement("div");
-
-    div.classList.add("card");
-    if (deadlineStatus === "overdue") {
-        div.classList.add("card-overdue");
-    }
-
-    const statusClass = `status-${internship.status.toLowerCase()}`;
-
-div.innerHTML = `
-  <h3>${internship.company}</h3>
-  <p><strong>Role:</strong> ${internship.role}</p>
-  <p><strong>Location:</strong> ${internship.location || "N/A"}</p>
-  <p><strong>Date Applied:</strong> ${internship.date_applied || "N/A"}</p>
-  <p><strong>Deadline:</strong> ${internship.deadline || "N/A"} ${deadlineBadge}</p>
-  <p>${internship.notes || ""}</p>
-
-  <span class="status-badge ${statusClass}">
-    ${internship.status}
-  </span>
-
-  <div class="card-actions">
-    <button class="edit-btn" onclick="editInternship(
-      ${internship.id},
-      '${escapeSingleQuotes(internship.company)}',
-      '${escapeSingleQuotes(internship.role)}',
-      '${escapeSingleQuotes(internship.status)}',
-      '${escapeSingleQuotes(internship.location || "")}',
-      '${escapeSingleQuotes(internship.notes || "")}',
-      '${escapeSingleQuotes(internship.date_applied || "")}',
-      '${escapeSingleQuotes(internship.deadline || "")}'
-    )">
-      Edit
-    </button>
-
-    <button class="delete-btn" onclick="deleteInternship(${internship.id})">
-      Delete
-    </button>
-  </div>
-`;
-
-    internshipList.appendChild(div);
-  });
 
 function escapeCsvValue(value) {
   const stringValue = String(value ?? "");
@@ -325,8 +267,8 @@ function downloadCsv(filename, csvContent) {
   const url = URL.createObjectURL(blob);
 
   const link = document.createElement("a");
-  link.setAttribute("href", url);
-  link.setAttribute("download", filename);
+  link.href = url;
+  link.download = filename;
   link.style.display = "none";
 
   document.body.appendChild(link);
@@ -367,6 +309,7 @@ async function deleteInternship(id) {
   }
 
 
+
   showToast("Internship deleted", "delete");
   fetchInternships();
 }
@@ -379,58 +322,59 @@ function resetForm() {
   cancelEditBtn.classList.add("hidden");
   clearFormMessage();
   clearInputErrors();
- }
+}
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const internship = {
-  company: document.getElementById("company").value.trim(),
-  role: document.getElementById("role").value.trim(),
-  status: document.getElementById("status").value,
-  location: document.getElementById("location").value.trim(),
-  notes: document.getElementById("notes").value.trim(),
-  date_applied: document.getElementById("date_applied").value,
-  deadline: document.getElementById("deadline").value
-};
+    company: document.getElementById("company").value.trim(),
+    role: document.getElementById("role").value.trim(),
+    status: document.getElementById("status").value,
+    location: document.getElementById("location").value.trim(),
+    notes: document.getElementById("notes").value.trim(),
+    date_applied: document.getElementById("date_applied").value,
+    deadline: document.getElementById("deadline").value
+  };
 
   if (!validateForm(internship)) {
-  return;
-    }
+    return;
+  }
 
-if (editingId) {
-  await fetch(`/api/internships/${editingId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(internship)
-  });
+  if (editingId) {
+    await fetch(`/api/internships/${editingId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(internship)
+    });
 
-  showToast("Internship updated", "info");
-} else {
-  await fetch("/api/internships", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(internship)
-  });
+    showToast("Internship updated", "info");
+  } else {
+    await fetch("/api/internships", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(internship)
+    });
 
-  showToast("Internship added", "success");
-}
+    showToast("Internship added", "success");
+  }
+
   resetForm();
   fetchInternships();
 });
 
 if (cancelEditBtn) {
-cancelEditBtn.addEventListener("click", () => {
-  resetForm();
-    });
+  cancelEditBtn.addEventListener("click", () => {
+    resetForm();
+  });
 }
 
 
-fetchInternships();
+
 if (exportCsvBtn) {
   exportCsvBtn.addEventListener("click", async () => {
     const data = await getFilteredAndSortedInternships();
@@ -445,6 +389,8 @@ if (exportCsvBtn) {
     showToast("CSV exported successfully", "success");
   });
 }
+
+fetchInternships();
 
 if (statusFilter) {
   statusFilter.addEventListener("change", fetchInternships);
