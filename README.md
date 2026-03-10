@@ -1,21 +1,61 @@
 # Internship Tracker
 
-A **full-stack web application** for managing and tracking internship and placement applications.
-The application allows users to add, view, and organise internship applications with details such as company, role, status, location, and notes.
+A **full-stack web** application that helps students track their internship applications in one place.
+Users can add, manage, filter, and export their applications while monitoring deadlines and application progress.
 
-This project demonstrates a complete full-stack workflow including a REST API backend, database integration, and a dynamic frontend interface.
+This project demonstrates practical full-stack development using Node.js, Express, SQLite, and vanilla JavaScript.
 
 ---
 
-## Features
 
+# Features
+## Application Management
 * Add internship applications
-* Track application status (Applied, Interview, Offer, Rejected)
-* Store applications in a SQLite database
-* Display applications dynamically in the browser
-* REST API built with Express
-* Responsive card-based UI
-* Status badges with colour indicators
+* Delete applications
+* Edit existing applications
+* Cancel edit mode
+## Filtering & Search
+* Filter by application status:
+  * Applied
+  * Interview
+  * Offer
+  * Rejected
+* Search by company name or role
+## Sorting
+* Newest first
+* Oldest first
+* Company A → Z
+## Dashboard Statistics
+Displays live statistics for:
+* Total applications
+* Applied
+* Interview
+* Offers
+* Rejected
+## Deadlines & Alerts
+Each internship can include an application deadline.
+The system automatically:
+
+* Highlights overdue applications
+
+* Shows **Due Soon** warnings for deadlines within 7 days
+
+## CSV Export
+Users can export their applications to a CSV file for external tracking or backup.
+Export respects:
+* search filters
+* status filters
+* sorting
+
+## User Experience Improvements
+* Toast notifications for:
+  * Added internship
+  * Updated internship
+  * Deleted internship
+
+* Form validation with friendly error messages
+* Disabled export button when there are no applications
+* Clean responsive UI
 
 ---
 
@@ -68,11 +108,6 @@ Clone the repository:
 
 ```
 git clone https://github.com/EnitaH/internship-tracker.git
-```
-
-Navigate into the project folder:
-
-```
 cd internship-tracker
 ```
 
@@ -117,33 +152,33 @@ Returns all stored internship applications.
 ```
 POST /api/internships
 ```
-
-Example request body:
+### Update internship
 
 ```
-{
-  "company": "Aize",
-  "role": "Software Engineer",
-  "status": "Applied",
-  "location": "Aberdeen",
-  "notes": "Applied via company website",
-  "date_applied": "2026-03-04"
-}
+PUT /api/internships/:id
 ```
+### Delete internship
 
----
+```
+DELETE /api/internships/:id
+```
 
 ## Future Improvements
-
-* Edit internship entries
-* Delete applications
-* Search and filtering
-* Dashboard statistics (applications, interviews, offers)
-* User authentication
-* Deployment to a cloud platform
-
+Authentication / user accounts
+* Cloud database
+* Application analytics
+* Email deadline reminders
+* Dark mode
 ---
 
+## Example Use Case
+A student applying to multiple companies can:
+1. Add each internship application
+2. Track application status
+3. Monitor approaching deadlines
+4. Filter applications by status
+5. Export data for external analysis
+   
 ## Author
 
 **Enita Hashemi**  
